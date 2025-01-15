@@ -893,9 +893,10 @@ void verticesToDepth(DeviceArray<float>& vmap_src, DeviceArray2D<float> & dst, f
     cudaSafeCall ( cudaGetLastError () );
 };
 
-texture<uchar4, 2, cudaReadModeElementType> inTex;
+# texture<uchar4, 2, cudaReadModeElementType> inTex;
 
-__global__ void bgr2IntensityKernel(PtrStepSz<unsigned char> dst)
+__global__ void bgr2IntensityKernel(cudaTextureObject_t texObj,
+                                    PtrStepSz<unsigned char> dst)
 {
     int x = blockIdx.x * blockDim.x + threadIdx.x;
     int y = blockIdx.y * blockDim.y + threadIdx.y;
@@ -903,26 +904,59 @@ __global__ void bgr2IntensityKernel(PtrStepSz<unsigned char> dst)
     if (x >= dst.cols || y >= dst.rows)
         return;
 
-    uchar4 src = tex2D(inTex, x, y);
+    // Fetch the pixel using the texture object
+    uchar4 src = tex2D<uchar4>(texObj, (float)x, (float)y);
 
-    int value = (float)src.x * 0.114f + (float)src.y * 0.299f + (float)src.z * 0.587f;
-
-    dst.ptr (y)[x] = value;
+    // Convert from BGR (x=blue, y=green, z=red in uchar4) to intensity
+    int value = static_cast<int>(src.x * 0.114f 
+                               + src.y * 0.587f 
+                               + src.z * 0.299f);
+    dst.ptr(y)[x] = static_cast<unsigned char>(value);
 }
 
-void imageBGRToIntensity(cudaArray * cuArr, DeviceArray2D<unsigned char> & dst)
+void imageBGRToIntensity(cudaArray* cuArr, 
+                         DeviceArray2D<unsigned char> & dst)
 {
-    dim3 block (32, 8);
-    dim3 grid (getGridDim (dst.cols (), block.x), getGridDim (dst.rows(), block.y));
+    // Create the texture resource description
+    cudaResourceDesc resDesc = {};
+    memset(&resDesc, 0, sizeof(resDesc));
+    resDesc.resType = cudaResourceTypeArray;
+    resDesc.res.array.array = cuArr;
 
-    cudaSafeCall(cudaBindTextureToArray(inTex, cuArr));
+    // Create the texture description
+    cudaTextureDesc texDesc = {};
+    memset(&texDesc, 0, sizeof(texDesc));
+    texDesc.addressMode[0]   = cudaAddressModeClamp;
+    texDesc.addressMode[1]   = cudaAddressModeClamp;
+    texDesc.filterMode       = cudaFilterModePoint;
+    texDesc.readMode         = cudaReadModeElementType;
+    texDesc.normalizedCoords = 0; // 0 = use integer pixel coordinates
 
-    bgr2IntensityKernel<<<grid, block>>>(dst);
+    // Create the texture object
+    cudaTextureObject_t texObj = 0;
+    cudaError_t err = cudaCreateTextureObject(&texObj, &resDesc, &texDesc, nullptr);
+    if (err != cudaSuccess)
+    {
+        std::cerr << "Error creating texture object: " << cudaGetErrorString(err) << std::endl;
+        return;
+    }
 
+    // Prepare your block / grid for the output
+    dim3 block(32, 8);
+    dim3 grid(getGridDim(dst.cols(), block.x), getGridDim(dst.rows(), block.y));
+
+    // Launch the kernel. Pass in the texture object
+    bgr2IntensityKernel<<<grid, block>>>(texObj, dst);
     cudaSafeCall(cudaGetLastError());
+    cudaSafeCall(cudaDeviceSynchronize());
 
-    cudaSafeCall(cudaUnbindTexture(inTex));
-};
+    // Destroy the texture object when done
+    err = cudaDestroyTextureObject(texObj);
+    if (err != cudaSuccess)
+    {
+        std::cerr << "Error destroying texture object: " << cudaGetErrorString(err) << std::endl;
+    }
+}
 
 __constant__ float gsobel_x3x3[9];
 __constant__ float gsobel_y3x3[9];
