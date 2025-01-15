@@ -893,7 +893,7 @@ void verticesToDepth(DeviceArray<float>& vmap_src, DeviceArray2D<float> & dst, f
     cudaSafeCall ( cudaGetLastError () );
 };
 
-# texture<uchar4, 2, cudaReadModeElementType> inTex;
+// texture<uchar4, 2, cudaReadModeElementType> inTex;
 
 __global__ void bgr2IntensityKernel(cudaTextureObject_t texObj,
                                     PtrStepSz<unsigned char> dst)
