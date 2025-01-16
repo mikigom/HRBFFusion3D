@@ -26,7 +26,7 @@
 class Resolution
 {
     public:
-        EFUSION_API static const Resolution & getInstance(int width = 640,int height = 480);
+        EFUSION_API static const Resolution & getInstance(int width = 0,int height = 0);
 
         const int & width() const
         {
@@ -54,7 +54,7 @@ class Resolution
         }
 
     private:
-        Resolution(int width, int height)
+        Resolution(int width = 640, int height = 480)
          : imgWidth(width),
            imgHeight(height),
            imgNumPixels(width * height)
