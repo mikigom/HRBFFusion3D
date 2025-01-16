@@ -5,14 +5,14 @@ sensorType = 3;
 klgFileName = "fr1_desk.klg";
 AssociationFile = "associations.txt";
 ##camera intrinsic
-parameterFileCvFormat = "TUM1.yaml";
+parameterFileCvFormat = "/opt/HRBFFusion3D/Examples/RGB-D/TUM1.yaml";
 
 #--------------------------------------------------------------------------------------------
 #Hierachical Optimization Parameters
 #--------------------------------------------------------------------------------------------
 optimizationUseLocalBA =  true;    //local  BA
 optimizationUseGlobalBA = true;    //global BA
-optimizationVocabularyFile = "/home/yabinxu/workspace/HRBFFusion3D/Core/src/ORB_SLAM2_m/Vocabulary/ORBvoc.txt"
+optimizationVocabularyFile = "/opt/HRBFFusion3D/VocabularyORBvoc.txt"
 
 #--------------------------------------------------------------------------------------------
 #Preprocessing Parameters
