@@ -12,7 +12,7 @@ parameterFileCvFormat = "/opt/HRBFFusion3D/Examples/RGB-D/TUM1.yaml";
 #--------------------------------------------------------------------------------------------
 optimizationUseLocalBA =  true;    //local  BA
 optimizationUseGlobalBA = true;    //global BA
-optimizationVocabularyFile = "/opt/HRBFFusion3D/VocabularyORBvoc.txt"
+optimizationVocabularyFile = "/opt/HRBFFusion3D/Vocabulary/ORBvoc.txt"
 
 #--------------------------------------------------------------------------------------------
 #Preprocessing Parameters
