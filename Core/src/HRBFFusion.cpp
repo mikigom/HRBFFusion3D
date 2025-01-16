@@ -1,5 +1,5 @@
-
 #include "HRBFFusion.h"
+#include <iostream>
 
 //-------- global variables --------
 std::condition_variable condVar;
@@ -251,9 +251,13 @@ void HRBFFusion::inputFrame()
         exit(0);
     }
 
+    std::cout << std::endl;
+    std::cout << GlobalStateParam::get().currentWorkingDirectory + "/" + vstrImageFilenamesRGB[tick -1] << std::endl;
+    std::cout << GlobalStateParam::get().currentWorkingDirectory + "/" + vstrImageFilenamesD[tick - 1] << std::endl;
     mImGray = imRGB;
     if(mImGray.channels()==3)
     {
+        std::cout << "3 Channel Founded" << std::endl;
         if(mbRGB)
             cvtColor(mImGray,mImGray,CV_RGB2GRAY);
         else
@@ -261,10 +265,15 @@ void HRBFFusion::inputFrame()
     }
     else if(mImGray.channels()==4)
     {
+        std::cout << "4 Channel Founded" << std::endl;
         if(mbRGB)
             cvtColor(mImGray,mImGray,CV_RGBA2GRAY);
         else
             cvtColor(mImGray,mImGray,CV_BGRA2GRAY);
+    }
+    else if(mImGray.channels()==1)
+    {
+        std::cout << "1 Channel Founded" << std::endl;
     }
     cvtColor(imRGB, imRGB, CV_RGB2BGR);
 }
