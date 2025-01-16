@@ -26,7 +26,7 @@
 class Resolution
 {
     public:
-        EFUSION_API static const Resolution & getInstance(int width = 0,int height = 0);
+        EFUSION_API static const Resolution & getInstance(int width = 640,int height = 480);
 
         const int & width() const
         {
