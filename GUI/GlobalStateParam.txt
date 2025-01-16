@@ -3,7 +3,7 @@ currentWorkingDirectory = "/workspace/rgbd_dataset_freiburg1_desk"
 ##sensortype : 1 for realtime device, 2 for off-line klg data, 3 for association file
 sensorType = 3;
 klgFileName = "fr1_desk.klg";
-AssociationFile = "associations.txt";
+AssociationFile = "/opt/HRBFFusion3D/Examples/RGB-D/associations/fr1_desk.txt";
 ##camera intrinsic
 parameterFileCvFormat = "/opt/HRBFFusion3D/Examples/RGB-D/TUM1.yaml";
 
