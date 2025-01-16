@@ -107,16 +107,16 @@ MainController::MainController(int argc, char * argv[])
 
     //setup the gui
     gui = new GUI(logFile.length() == 0, Parse::get().arg(argc, argv, "-sc", empty) > -1);
-    gui->flipColors->Ref().Set(logReader->flipColors);
-    gui->rgbOnly->Ref().Set(false);
-    gui->pyramid->Ref().Set(true);
-    gui->fastOdom->Ref().Set(fastOdom);
-    gui->confidenceThreshold->Ref().Set(confidence);
-    gui->depthCutoff->Ref().Set(depth);
-    gui->icpWeight->Ref().Set(icp);
-    gui->so3->Ref().Set(so3);
-    gui->frameToFrameRGB->Ref().Set(frameToFrameRGB);
-    gui->drawUnstable->Ref().Set(draw_unstable);
+    gui->flipColors->Ref() = logReader->flipColors;
+    gui->rgbOnly->Ref() = false;
+    gui->pyramid->Ref() = true;
+    gui->fastOdom->Ref() = fastOdom;
+    gui->confidenceThreshold->Ref() = confidence;
+    gui->depthCutoff->Ref() = depth;
+    gui->icpWeight->Ref() = icp;
+    gui->so3->Ref() = so3;
+    gui->frameToFrameRGB->Ref() = frameToFrameRGB;
+    gui->drawUnstable->Ref() = draw_unstable;
 
     resizeStream = new Resize(Resolution::getInstance().width(),
                               Resolution::getInstance().height(),
@@ -283,12 +283,12 @@ void MainController::run()
         //Tracking inliers in histgram
         std::stringstream stri;
         stri << hrbfFusion->getFrameToModel().lastICPCount;
-        gui->trackInliers->Ref().Set(stri.str());
+        gui->trackInliers->Ref() = stri.str();
         //Tracking ICP error in histgram.
         std::stringstream stre;
 
         stre << (std::isnan(hrbfFusion->getFrameToModel().lastICPError) ? 0 : hrbfFusion->getFrameToModel().lastICPError);
-        gui->trackRes->Ref().Set(stre.str());
+        gui->trackRes->Ref() = stre.str();
 
         if(gui->start->Get()|| aStep) {
             gui->resLog.Log((std::isnan(hrbfFusion->getFrameToModel().lastICPError) ? std::numeric_limits<float>::max() : hrbfFusion->getFrameToModel().lastICPError), icpErrThresh);
