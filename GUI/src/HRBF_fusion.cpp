@@ -432,7 +432,7 @@ void MainController::run()
                         hrbfFusion->getIndexMap().imageTexHRBF()
                          );
         gui->displayImg("Model",
-                        hrbfFusion->getTextures()[GPUTexture::NORMAL]
+                        hrbfFusion->getIndexMap().normalTexHRBF()
                         );
 
         std::stringstream strs;
