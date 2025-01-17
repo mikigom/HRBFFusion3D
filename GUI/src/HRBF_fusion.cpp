@@ -428,63 +428,11 @@ void MainController::run()
             }
         }
 
-        /* WIP */
-        // 1) Create a CPU buffer to hold the 4D vertex data
-        int rows = Resolution::getInstance().rows();
-        int cols = Resolution::getInstance().cols();
-
-        // This is a templated "image" type used throughout ElasticFusion code
-        // storing one Eigen::Vector4f per pixel (x, y, z, w).
-        Img<Eigen::Vector4f> vertexMap(rows, cols);
-
-        // 2) Download from GPU into this CPU buffer
-        hrbfFusion->getTextures()[GPUTexture::VERTEX_FILTERED]->texture->Download(vertexMap.data, GL_RGBA, GL_FLOAT);
-        Img<float> zOnly(Resolution::getInstance().rows(), Resolution::getInstance().cols());
-
-        for(int r = 0; r < Resolution::getInstance().rows(); r++)
-        {
-            for(int c = 0; c < Resolution::getInstance().cols(); c++)
-            {
-                float x = vertexMap.at<Eigen::Vector4f>(r, c)(0);
-                float y = vertexMap.at<Eigen::Vector4f>(r, c)(1);
-                float z = vertexMap.at<Eigen::Vector4f>(r, c)(2);
-                float w = vertexMap.at<Eigen::Vector4f>(r, c)(3); // often stores confidence or something else
-
-                // Keep only the z coordinate
-                zOnly.at<float>(r, c) = z;
-            }
-        }
-
-        static GPUTexture* zOnlyTexture = nullptr;
-
-        // Create the texture once (static pointer) so it isn't reallocated every frame
-        if(!zOnlyTexture)
-        {
-            // For a single-channel float, we can store it in RGBA but only fill R
-            // or use GL_LUMINANCE as the "format" with GL_FLOAT data.
-            // Many GPUs no longer natively support LUMINANCE, so RGBA is safer fallback.
-            zOnlyTexture = new GPUTexture(cols,
-                                        rows,
-                                        GL_LUMINANCE32F_ARB,  // internal GPU format
-                                        GL_LUMINANCE,         // input format
-                                        GL_FLOAT,             // data type
-                                        false,                // no interpolation?
-                                        false);               // no mipmaps?
-        }
-
-        // Upload the entire row×col float array
-        zOnlyTexture->texture->Upload(zOnly.data,
-                                    GL_LUMINANCE,  // matches the constructor 'format'
-                                    GL_FLOAT);     // matches the constructor 'type'
-
-
-        /* WIP */
-
         // gui->displayImg("ModelImg",
         //                 hrbfFusion->getIndexMap().normalTexHRBF()
         //                  );
         gui->displayImg("ModelImg",
-                        zOnlyTexture
+                        hrbfFusion->getTextures()[GPUTexture::DEPTH_METRIC_FILTERED]
                          );
         gui->displayImg("Model",
                         hrbfFusion->getTextures()[GPUTexture::NORMAL]
