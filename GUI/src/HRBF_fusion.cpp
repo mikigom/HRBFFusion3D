@@ -429,7 +429,7 @@ void MainController::run()
         }
 
         gui->displayImg("ModelImg",
-                        hrbfFusion->getIndexMap().normalTexHRBF()
+                        hrbfFusion->getIndexMap().imageTexHRBF()
                          );
         gui->displayImg("Model",
                         hrbfFusion->getTextures()[GPUTexture::NORMAL]
