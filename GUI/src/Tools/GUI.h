@@ -80,7 +80,7 @@ class GUI
 
             pangolin::Display(GPUTexture::DEPTH_NORM).SetAspect(640.0f / 480.0f);
 
-            pangolin::Display("ModelImg").SetAspect(640.0f / 480.0f);
+            pangolin::Display("DepthMetricFiltered").SetAspect(640.0f / 480.0f);
 
             pangolin::Display("Model").SetAspect(640.0f / 480.0f);
 
@@ -107,7 +107,7 @@ class GUI
                                           .SetLayout(pangolin::LayoutEqualHorizontal)
                                           .AddDisplay(pangolin::Display(GPUTexture::RGB))
                                           .AddDisplay(pangolin::Display(GPUTexture::DEPTH_NORM))
-                                          .AddDisplay(pangolin::Display("ModelImg"))
+                                          .AddDisplay(pangolin::Display("DepthMetricFiltered"))
                                           .AddDisplay(pangolin::Display("Model"))
                                           .AddDisplay(*resPlot)
                                           .AddDisplay(*inPlot);

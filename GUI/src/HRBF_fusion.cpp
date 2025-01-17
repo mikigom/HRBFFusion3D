@@ -428,9 +428,9 @@ void MainController::run()
             }
         }
 
-        gui->displayImg("ModelImg",
-                        hrbfFusion->getIndexMap().normalTexHRBF()
-                         );
+        gui->displayImg("Depth_Metric_Filtered",
+                        hrbfFusion->getTextures()[GPUTexture::DEPTH_METRIC_FILTERED]
+                        );
         gui->displayImg("Model",
                         hrbfFusion->getTextures()[GPUTexture::NORMAL]
                         );
