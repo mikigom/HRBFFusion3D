@@ -428,13 +428,21 @@ void MainController::run()
             }
         }
 
-        Img<Eigen::Vector4f> vertices(Resolution::getInstance().rows(), Resolution::getInstance().cols());
-        hrbfFusion->getTextures()[GPUTexture::VERTEX_FILTERED]->texture->Download(vertices.data, GL_RGBA, GL_FLOAT);
+        // 1) Create a CPU buffer to hold the 4D vertex data
+        int rows = Resolution::getInstance().rows();
+        int cols = Resolution::getInstance().cols();
+
+        // This is a templated "image" type used throughout ElasticFusion code
+        // storing one Eigen::Vector4f per pixel (x, y, z, w).
+        Img<Eigen::Vector4f> vertexMap(rows, cols);
+
+        // 2) Download from GPU into this CPU buffer
+        hrbfFusion->getTextures()[GPUTexture::VERTEX_FILTERED]->texture->Download(vertexMap.data, GL_RGBA, GL_FLOAT);
         Img<float> zOnly(Resolution::getInstance().rows(), Resolution::getInstance().cols());
 
-        for(int r = 0; r < rows; r++)
+        for(int r = 0; r < Resolution::getInstance().rows(); r++)
         {
-            for(int c = 0; c < cols; c++)
+            for(int c = 0; c < Resolution::getInstance().cols(); c++)
             {
                 float x = vertexMap.at<Eigen::Vector4f>(r, c)(0);
                 float y = vertexMap.at<Eigen::Vector4f>(r, c)(1);
