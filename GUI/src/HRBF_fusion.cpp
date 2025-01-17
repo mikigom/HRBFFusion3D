@@ -364,7 +364,7 @@ void MainController::run()
 
         if(gui->draw_prediction->Get())
         {
-           hrbfFusion->getIndexMap().renderHRBFPrediction(gui->s_cam.GetProjectionModelViewMatrix(), pose);
+           // hrbfFusion->getIndexMap().renderHRBFPrediction(gui->s_cam.GetProjectionModelViewMatrix(), pose);
             //hrbfFusion->getIndexMap().renderSurfelPrediction(gui->s_cam.GetProjectionModelViewMatrix(), pose);
         }
 
