@@ -428,6 +428,7 @@ void MainController::run()
             }
         }
 
+        /* WIP */
         // 1) Create a CPU buffer to hold the 4D vertex data
         int rows = Resolution::getInstance().rows();
         int cols = Resolution::getInstance().cols();
@@ -454,11 +455,36 @@ void MainController::run()
             }
         }
 
+        static GPUTexture* zOnlyTexture = nullptr;
+
+        // Create the texture once (static pointer) so it isn't reallocated every frame
+        if(!zOnlyTexture)
+        {
+            // For a single-channel float, we can store it in RGBA but only fill R
+            // or use GL_LUMINANCE as the "format" with GL_FLOAT data.
+            // Many GPUs no longer natively support LUMINANCE, so RGBA is safer fallback.
+            zOnlyTexture = new GPUTexture(cols,
+                                        rows,
+                                        GL_LUMINANCE32F_ARB,  // internal GPU format
+                                        GL_LUMINANCE,         // input format
+                                        GL_FLOAT,             // data type
+                                        false,                // no interpolation?
+                                        false);               // no mipmaps?
+        }
+
+        // Upload the entire row×col float array
+        zOnlyTexture->texture->Upload(zOnly.data,
+                                    GL_LUMINANCE,  // matches the constructor 'format'
+                                    GL_FLOAT);     // matches the constructor 'type'
+
+
+        /* WIP */
+
         // gui->displayImg("ModelImg",
         //                 hrbfFusion->getIndexMap().normalTexHRBF()
         //                  );
         gui->displayImg("ModelImg",
-                        zOnly
+                        zOnlyTexture
                          );
         gui->displayImg("Model",
                         hrbfFusion->getTextures()[GPUTexture::NORMAL]
