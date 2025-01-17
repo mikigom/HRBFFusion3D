@@ -428,14 +428,11 @@ void MainController::run()
             }
         }
 
-        // gui->displayImg("ModelImg",
-        //                 hrbfFusion->getIndexMap().normalTexHRBF()
-        //                  );
         gui->displayImg("ModelImg",
-                        hrbfFusion->getTextures()[GPUTexture::NORMAL]
+                        hrbfFusion->getIndexMap().normalTexHRBF()
                          );
         gui->displayImg("Model",
-                        hrbfFusion->getTextures()[GPUTexture::RGB]
+                        hrbfFusion->getTextures()[GPUTexture::NORMAL]
                         );
 
         std::stringstream strs;
