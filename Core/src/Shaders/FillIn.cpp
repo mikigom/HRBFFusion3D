@@ -339,6 +339,33 @@ void FillIn::downloadtexture(const Eigen::Matrix4f& lastPose,int lastFrames, boo
      cv::imwrite("fillin_colorMap.png", imageCV, compression_params);
      std::cout << "fillin_colorMap saved successfully" << std::endl;
 
+    cv::Mat normalImagCV;
+    normalImagCV.create(Resolution::getInstance().rows(), Resolution::getInstance().cols(), CV_8UC3);
+    //create normalImagCV;
+    //CV_ASSERT(normalImagCV.channels() == 4);
+    for (int i = 0; i < normalImagCV.rows; ++i){
+        for (int j = 0; j < normalImagCV.cols; ++j){
+            cv::Vec3b& bgra = normalImagCV.at<cv::Vec3b>(i, j);
+            if(fillIn_normals.at<Eigen::Vector4f>(i,j)(0) == 0 && 
+               fillIn_normals.at<Eigen::Vector4f>(i,j)(1) == 0 && 
+               fillIn_normals.at<Eigen::Vector4f>(i,j)(2) == 0)
+            {
+                bgra[2] = static_cast<unsigned char>(UCHAR_MAX);
+                bgra[1] = static_cast<unsigned char>(UCHAR_MAX);
+                bgra[0] = static_cast<unsigned char>(UCHAR_MAX);
+            }else{
+                bgra[2] = static_cast<unsigned char>(UCHAR_MAX * (fillIn_normals.at<Eigen::Vector4f>(i,j)(0) > 0 ? fillIn_normals.at<Eigen::Vector4f>(i,j)(0) : 0)); // Blue
+                bgra[1] = static_cast<unsigned char>(UCHAR_MAX * (fillIn_normals.at<Eigen::Vector4f>(i,j)(1) > 0 ? fillIn_normals.at<Eigen::Vector4f>(i,j)(1) : 0)); // Green
+                bgra[0] = static_cast<unsigned char>(UCHAR_MAX * (fillIn_normals.at<Eigen::Vector4f>(i,j)(2) > 0 ? fillIn_normals.at<Eigen::Vector4f>(i,j)(2) : 0)); // Red
+            }
+        }
+    }
+//    std::vector<int> compression_params;
+//    compression_params.push_back(CV_IMWRITE_PNG_COMPRESSION);
+//    compression_params.push_back(0);
+    cv::imwrite("fillin_NormalMap.png", normalImagCV, compression_params);
+    std::cout << "fillin_NormalMap saved successfully" << std::endl;
+
      //output txt
      std::ofstream textureD;
      std::string filename = "./fillin/fillInTex_";
