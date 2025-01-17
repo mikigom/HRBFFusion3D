@@ -428,14 +428,29 @@ void MainController::run()
             }
         }
 
-        // Img<Eigen::Vector4f> vertices(Resolution::getInstance().rows(), Resolution::getInstance().cols());
-        // textures[GPUTexture::VERTEX_FILTERED]->texture->Download(vertices.data, GL_RGBA, GL_FLOAT);
+        Img<Eigen::Vector4f> vertices(Resolution::getInstance().rows(), Resolution::getInstance().cols());
+        textures[GPUTexture::VERTEX_FILTERED]->texture->Download(vertices.data, GL_RGBA, GL_FLOAT);
+        Img<float> zOnly(rows, cols);
+
+        for(int r = 0; r < rows; r++)
+        {
+            for(int c = 0; c < cols; c++)
+            {
+                float x = vertexMap.at<Eigen::Vector4f>(r, c)(0);
+                float y = vertexMap.at<Eigen::Vector4f>(r, c)(1);
+                float z = vertexMap.at<Eigen::Vector4f>(r, c)(2);
+                float w = vertexMap.at<Eigen::Vector4f>(r, c)(3); // often stores confidence or something else
+
+                // Keep only the z coordinate
+                zOnly.at<float>(r, c) = z;
+            }
+        }
 
         // gui->displayImg("ModelImg",
         //                 hrbfFusion->getIndexMap().normalTexHRBF()
         //                  );
         gui->displayImg("ModelImg",
-                        hrbfFusion->getTextures()[GPUTexture::VERTEX_FILTERED]
+                        zOnly
                          );
         gui->displayImg("Model",
                         hrbfFusion->getTextures()[GPUTexture::NORMAL]
