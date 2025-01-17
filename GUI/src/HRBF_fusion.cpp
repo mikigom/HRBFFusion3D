@@ -428,8 +428,14 @@ void MainController::run()
             }
         }
 
+        // Img<Eigen::Vector4f> vertices(Resolution::getInstance().rows(), Resolution::getInstance().cols());
+        // textures[GPUTexture::VERTEX_FILTERED]->texture->Download(vertices.data, GL_RGBA, GL_FLOAT);
+
+        // gui->displayImg("ModelImg",
+        //                 hrbfFusion->getIndexMap().normalTexHRBF()
+        //                  );
         gui->displayImg("ModelImg",
-                        hrbfFusion->getIndexMap().normalTexHRBF()
+                        hrbfFusion->getTextures()[GPUTexture::VERTEX_FILTERED]
                          );
         gui->displayImg("Model",
                         hrbfFusion->getTextures()[GPUTexture::NORMAL]
