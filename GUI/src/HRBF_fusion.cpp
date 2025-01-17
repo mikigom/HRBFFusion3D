@@ -429,7 +429,7 @@ void MainController::run()
         }
 
         Img<Eigen::Vector4f> vertices(Resolution::getInstance().rows(), Resolution::getInstance().cols());
-        textures[GPUTexture::VERTEX_FILTERED]->texture->Download(vertices.data, GL_RGBA, GL_FLOAT);
+        hrbfFusion->getTextures()[GPUTexture::VERTEX_FILTERED]->texture->Download(vertices.data, GL_RGBA, GL_FLOAT);
         Img<float> zOnly(rows, cols);
 
         for(int r = 0; r < rows; r++)
